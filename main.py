@@ -132,7 +132,7 @@ def train(graph, model, saver, sess, data_generator, log_dir, restore_itr=0):
             postlosses.append(results[-1])
 
         if itr != 0 and itr % PRINT_INTERVAL == 0:
-            print 'Iteration %d: average preloss is %.2f, average postloss is %.2f' % (itr, np.mean(prelosses), np.mean(postlosses))
+            print ('Iteration %d: average preloss is %.2f, average postloss is %.2f' % (itr, np.mean(prelosses), np.mean(postlosses)))
             prelosses, postlosses = [], []
 
         if itr != 0 and itr % TEST_PRINT_INTERVAL == 0:
@@ -150,10 +150,10 @@ def train(graph, model, saver, sess, data_generator, log_dir, restore_itr=0):
                 with graph.as_default():
                     results = sess.run(input_tensors, feed_dict=feed_dict)
                 train_writer.add_summary(results[0], itr)
-                print 'Test results: average preloss is %.2f, average postloss is %.2f' % (np.mean(results[1]), np.mean(results[2]))
+                print ('Test results: average preloss is %.2f, average postloss is %.2f' % (np.mean(results[1]), np.mean(results[2])))
 
         if itr != 0 and (itr % SAVE_INTERVAL == 0 or itr == training_range[-1]):
-            print 'Saving model to: %s' % (save_dir + '_%d' % itr)
+            print ('Saving model to: %s' % (save_dir + '_%d' % itr))
             with graph.as_default():
                 saver.save(sess, save_dir + '_%d' % itr)
 
@@ -165,9 +165,9 @@ def generate_test_demos(data_generator):
         n_folders = len(data_generator.noisy_demos.keys())
         demos = data_generator.noisy_demos
     policy_demo_idx = [np.random.choice(n_demo, replace=False, size=FLAGS.test_update_batch_size) \
-                        for n_demo in [demos[i]['demoX'].shape[0] for i in xrange(n_folders)]]
+                        for n_demo in [demos[i]['demoX'].shape[0] for i in range(n_folders)]]
     selected_demoO, selected_demoX, selected_demoU = [], [], []
-    for i in xrange(n_folders):
+    for i in range(n_folders):
         selected_cond = np.array(demos[i]['demoConditions'])[np.arange(len(demos[i]['demoConditions'])) == policy_demo_idx[i]]
         Xs, Us, Os = [], [], []
         for idx in selected_cond:
@@ -184,7 +184,7 @@ def generate_test_demos(data_generator):
         selected_demoO.append(np.array(Os))
         selected_demoX.append(np.array(Xs))
         selected_demoU.append(np.array(Us))
-    print "Finished collecting demos for testing"
+    print ("Finished collecting demos for testing")
     selected_demo = dict(selected_demoX=selected_demoX, selected_demoU=selected_demoU, selected_demoO=selected_demoO)
     data_generator.selected_demo = selected_demo
 

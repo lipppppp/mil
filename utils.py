@@ -12,6 +12,9 @@ import os
 import errno
 import time
 import traceback as tb
+# import sys
+# reload(sys)
+# sys.getdefaultencoding('utf8')
 
 from color_print import *
 
@@ -49,7 +52,7 @@ class DataLogger(object):
         """ Unpickle data from file specified by filename. """
         try:
             with open_zip(filename, 'rb') as f:
-                result = pickle.load(f)
+                result = pickle.load(f,encoding='iso-8859-1')#需要告诉pickle,how to convert python bytestring data to python3 strings
             return result
         except IOError:
             LOGGER.debug('Unpickle error. Cannot find file: %s', filename)
@@ -69,7 +72,7 @@ def extract_demo_dict(demo_file):
         demos = DataLogger().unpickle(demo_file)
     else:
         demos = {}
-        for i in xrange(0, len(demo_file)):
+        for i in range(0, len(demo_file)):
             with Timer('Extracting demo file %d' % i):
                 demos[i] = DataLogger().unpickle(demo_file[i])
     return demos
@@ -86,7 +89,7 @@ class Timer(object):
         fname, lineno, method, _ = tb.extract_stack()[-2]  # Get caller
         _, fname = os.path.split(fname)
         id_str = '%s:%s' % (fname, method)
-        print 'TIMER:'+color_string('%s: %s (Elapsed: %fs)' % (id_str, self.message, new_time), color='gray')
+        print ('TIMER:'+color_string('%s: %s (Elapsed: %fs)' % (id_str, self.message, new_time), color='gray'))
 
 def load_scale_and_bias(data_path):
     with open(data_path, 'rb') as f:

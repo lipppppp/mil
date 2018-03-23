@@ -59,10 +59,10 @@ class DataGenerator(object):
                 demos[key]['demoX'] = demos[key]['demoX'][6:-6, :, :].copy()
                 demos[key]['demoU'] = demos[key]['demoU'][6:-6, :, :].copy()
         n_folders = len(demos.keys())
-        N_demos = np.sum(demo['demoX'].shape[0] for i, demo in demos.iteritems())
+        N_demos = np.sum(demo['demoX'].shape[0] for i, demo in demos.items())
         self.state_idx = range(demos[0]['demoX'].shape[-1])
         self._dU = demos[0]['demoU'].shape[-1]
-        print "Number of demos: %d" % N_demos
+        print ("Number of demos: %d" % N_demos)
         idx = np.arange(n_folders)
         if FLAGS.train:
             n_val = FLAGS.val_set_size # number of demos for testing
@@ -116,13 +116,13 @@ class DataGenerator(object):
             TOTAL_ITERS = FLAGS.metatrain_iterations
             self.all_training_filenames = []
             self.all_val_filenames = []
-            self.training_batch_idx = {i: OrderedDict() for i in xrange(TOTAL_ITERS)}
+            self.training_batch_idx = {i: OrderedDict() for i in range(TOTAL_ITERS)}
             self.val_batch_idx = {i: OrderedDict() for i in TEST_PRINT_INTERVAL*np.arange(1, int(TOTAL_ITERS/TEST_PRINT_INTERVAL))}
             if noisy:
-                self.noisy_training_batch_idx = {i: OrderedDict() for i in xrange(TOTAL_ITERS)}
+                self.noisy_training_batch_idx = {i: OrderedDict() for i in range(TOTAL_ITERS)}
                 self.noisy_val_batch_idx = {i: OrderedDict() for i in TEST_PRINT_INTERVAL*np.arange(1, TOTAL_ITERS/TEST_PRINT_INTERVAL)}
-            for itr in xrange(TOTAL_ITERS):
-                sampled_train_idx = random.sample(self.train_idx, self.meta_batch_size)
+            for itr in range(TOTAL_ITERS):
+                sampled_train_idx = random.sample(list(self.train_idx), self.meta_batch_size)
                 for idx in sampled_train_idx:
                     sampled_folder = train_img_folders[idx]
                     image_paths = natsorted(os.listdir(sampled_folder))
@@ -149,7 +149,7 @@ class DataGenerator(object):
                     if noisy:
                         self.noisy_training_batch_idx[itr][idx] = noisy_sampled_image_idx
                 if itr != 0 and itr % TEST_PRINT_INTERVAL == 0:
-                    sampled_val_idx = random.sample(self.val_idx, self.meta_batch_size)
+                    sampled_val_idx = random.sample(list(self.val_idx), self.meta_batch_size)
                     for idx in sampled_val_idx:
                         sampled_folder = val_img_folders[idx]
                         image_paths = natsorted(os.listdir(sampled_folder))
@@ -190,7 +190,7 @@ class DataGenerator(object):
         num_channels = network_config['image_channels']
         # make queue for tensorflow to read from
         filename_queue = tf.train.string_input_producer(tf.convert_to_tensor(all_filenames), shuffle=False)
-        print 'Generating image processing ops'
+        print ('Generating image processing ops')
         image_reader = tf.WholeFileReader()
         _, image_file = image_reader.read(filename_queue)
         image = tf.image.decode_gif(image_file)
@@ -215,7 +215,7 @@ class DataGenerator(object):
         image = tf.reshape(image, [self.T, -1])
         num_preprocess_threads = 1 # TODO - enable this to be set to >1
         min_queue_examples = 64 #128 #256
-        print 'Batching images'
+        print ('Batching images')
         images = tf.train.batch(
                 [image],
                 batch_size = batch_image_size,
@@ -223,7 +223,7 @@ class DataGenerator(object):
                 capacity=min_queue_examples + 3 * batch_image_size,
                 )
         all_images = []
-        for i in xrange(self.meta_batch_size):
+        for i in range(self.meta_batch_size):
             image = images[i*(self.update_batch_size+self.test_batch_size):(i+1)*(self.update_batch_size+self.test_batch_size)]
             image = tf.reshape(image, [(self.update_batch_size+self.test_batch_size)*self.T, -1])
             all_images.append(image)

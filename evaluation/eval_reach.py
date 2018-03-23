@@ -19,14 +19,14 @@ def evaluate_vision_reach(env, graph, model, data_generator, sess, exp_string, r
     if record_gifs:
         record_gifs_dir = os.path.join(log_dir, 'evaluated_gifs')
         mkdir_p(record_gifs_dir)
-    for i in xrange(len(selected_demo['selected_demoX'])):
+    for i in range(len(selected_demo['selected_demoX'])):
         selected_demoO = selected_demo['selected_demoO'][i]
         selected_demoX = selected_demo['selected_demoX'][i]
         selected_demoU = selected_demo['selected_demoU'][i]
         if record_gifs:
             gifs_dir = os.path.join(record_gifs_dir, 'color_%d' % i)
             mkdir_p(gifs_dir)
-        for j in xrange(REACH_DEMO_CONDITIONS):
+        for j in range(REACH_DEMO_CONDITIONS):
             if j in data_generator.demos[i]['demoConditions']:
                 dists = []
                 # ob = env.reset()
@@ -61,7 +61,7 @@ def evaluate_vision_reach(env, graph, model, data_generator, sess, exp_string, r
                 if record_gifs:
                     video = np.array(Os)
                     record_gif_path = os.path.join(gifs_dir, 'cond%d.samp0.gif' % j)
-                    print 'Saving gif sample to :%s' % record_gif_path
+                    print ('Saving gif sample to :%s' % record_gif_path)
                     imageio.mimwrite(record_gif_path, video)
             env.render(close=True)
             if j != REACH_DEMO_CONDITIONS - 1 or i != len(selected_demo['selected_demoX']) - 1:
@@ -69,9 +69,9 @@ def evaluate_vision_reach(env, graph, model, data_generator, sess, exp_string, r
                 env.render()
                 time.sleep(0.5)
         if i % 5  == 0:
-            print "Task %d: current success rate is %.5f" % (i, np.mean(successes))
+            print ("Task %d: current success rate is %.5f" % (i, np.mean(successes)))
     success_rate_msg = "Final success rate is %.5f" % (np.mean(successes))
-    print success_rate_msg
+    print (success_rate_msg)
     with open('logs/log_sim_vision_reach.txt', 'a') as f:
         f.write(exp_string + ':\n')
         f.write(success_rate_msg + '\n')
